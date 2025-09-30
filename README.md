@@ -196,11 +196,12 @@ Models were tested using cross-validation and a separate test set, with Optuna t
 | **Confusion Matrix** | Visualizes true vs. predicted outcomes to spot error patterns. |
 
 ### Strategy Leaderboard
-| Rank | Strategy       | AUC    | Accuracy | F1-Score | Models |
-|------|----------------|--------|----------|----------|--------|
-| 1    | Overall Best   | 0.6573 | 0.7631   | 0.8623   | 8      |
-| 2    | VAE Best       | 0.6573 | 0.7631   | 0.8623   | 8      |
-| 3    | SMOTE Best     | 0.6235 | 0.6899   | 0.7954   | 8      |
+| Rank | Strategy                         | AUC    | Accuracy | F1-Score | Models | Evaluation Method |
+|------|----------------------------------|--------|----------|----------|--------|-------------------|
+| 1    | Overall Best                     | 0.6573 | 0.7631   | 0.8623   | 8      | k-fold CV + Test  |
+| 2    | VAE Best                         | 0.6573 | 0.7631   | 0.8623   | 8      | k-fold CV + Test  |
+| 3    | SMOTE Best                       | 0.6235 | 0.6899   | 0.7954   | 8      | k-fold CV + Test  |
+| 4    | Xgb baseline                     | 0.6909 | 0.6357   | 0.6398   | 1      | Test only         |
 
 
 
