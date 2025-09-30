@@ -146,42 +146,64 @@ We trained several baseline models using concatenated features from all modaliti
 
 ---
 
-### 2️⃣ Multimodal Fusion Model
+## 2️⃣ Multimodal Fusion Model
 
-To leverage complementary information across modalities:
+This part of the project predicts outcomes in a Mental Rotation Task by combining brain signals (EEG), eye tracking, skin response (GSR), and facial expression data from the STD dataset. It uses a two-step process to make accurate predictions.
 
-**Steps:**
+### Approach
+1. **Process Each Data Type Separately**:
+   - **EEG (10 features)**: Captures brain activity patterns.
+   - **Eye Tracking (7 features)**: Tracks eye movement behavior.
+   - **GSR (4 features)**: Measures changes in skin response.
+   - **Facial Expressions (26 features)**: Analyzes facial feature changes.
+   - Each data type is processed using machine learning models (XGBoost, LightGBM, CatBoost for tree-based approaches or a custom neural network for advanced strategies) to create compact outputs called embeddings.
 
-1. Train separate models for each modality:
-   - **EEG → logits**
-   - **Eye → logits**
-   - **GSR → logits**
-   - **Facial → logits**
-2. Fuse logits or hidden embeddings from each modality.
-3. Train a **meta-classifier** (stacking ensemble or neural network) on fused outputs.  
+2. **Optimize Models with Optuna**:
+   - Optuna tunes model settings (e.g., complexity, learning speed) to boost performance for EEG, eye, GSR, and facial data, improving prediction accuracy.
 
-**Interpretability:**  
-- SHAP analysis on the final fusion model shows which modalities dominate predictions.  
-- LIME allows **local explanations** for individual participant predictions.  
+3. **Combine the Outputs**:
+   - Embeddings from all four data types are merged (e.g., 24 features for tree-based models: 4 data types × 3 models × 2 probabilities) and reduced (e.g., 116 → 40 features) for efficiency.
+   - Three strategies are available for testing:
+     - **VAE Best**: Creates synthetic data with a neural network (Variational Autoencoder) and uses tree-based models. This tied for the best performance.
+     - **SMOTE Best**: Balances uneven data with synthetic samples, using tree-based models.
+     - **Overall Best**: Mixes tree-based or neural models per data type, based on training results (customize in the script). Tied with VAE Best.
 
-**Outcome:**  
-- The fusion model achieved **higher F1-score and ROC-AUC** than single-modality models.  
-- EEG and Eye-tracking contributed most to prediction, followed by GSR and Facial expressions.  
+4. **Final Prediction**:
+   - A group of eight models (Logistic Regression L1/L2, Random Forest, XGBoost, LightGBM, CatBoost, Gradient Boosting, Extra Trees) combines the merged outputs, averaging their results for better accuracy.
 
----
+### Interpretability
+- **SHAP Analysis**: Shows EEG and eye tracking have the biggest impact on predictions, followed by GSR and facial expressions.
+- **LIME Explanations**: Highlights key features for individual participant predictions.
 
-## 🧪 Evaluation Metrics
+### Outcome
+- The **VAE Best** and **Overall Best** strategies performed best, achieving:
+  - **AUC**: 0.6573 (moderate reliability)
+  - **Accuracy**: 0.7631 (76.31% correct predictions)
+  - **F1-Score**: 0.8623 (strong for imbalanced data)
+- The high F1-score shows good handling of imbalanced data, but the AUC (0.6573) is below the target (~85%). Cross-validation showed higher potential (e.g., Logistic_L2 AUC: 0.9137), suggesting room for improvement with better model selection or tuning.
+- Optuna’s tuning improved model performance, with Logistic_L2 excelling for `vae_best`/`overall_best` and XGBoost for `smote_best`.
 
-| Metric       | Description |
-|-------------|-------------|
-| Accuracy    | Overall correct predictions |
-| Precision   | True positives / predicted positives |
-| Recall      | True positives / actual positives |
-| F1-score    | Harmonic mean of precision and recall |
-| ROC-AUC     | Area under the ROC curve |
-| Confusion Matrix | True vs predicted labels visualization |
+## Evaluation Metrics
+Models were tested using cross-validation and a separate test set, with Optuna tuning model settings. Below are the key metrics and strategy leaderboard:
 
-> All models were evaluated using **cross-validation** and **hold-out test sets** for robustness.
+| Metric | Description |
+|--------|-------------|
+| **Accuracy** | Percentage of correct predictions (e.g., 0.7631 for VAE Best). |
+| **Precision** | How many predicted positives were correct. |
+| **Recall** | How many actual positives were correctly predicted. |
+| **F1-Score** | Balances precision and recall (e.g., 0.8623 for VAE Best). |
+| **ROC-AUC** | Measures reliability (e.g., 0.6573 for VAE Best, up to 0.9137 in cross-validation). |
+| **Confusion Matrix** | Visualizes true vs. predicted outcomes to spot error patterns. |
+
+### Strategy Leaderboard
+| Rank | Strategy       | AUC    | Accuracy | F1-Score | Models |
+|------|----------------|--------|----------|----------|--------|
+| 1    | Overall Best   | 0.6573 | 0.7631   | 0.8623   | 8      |
+| 2    | VAE Best       | 0.6573 | 0.7631   | 0.8623   | 8      |
+| 3    | SMOTE Best     | 0.6235 | 0.6899   | 0.7954   | 8      |
+
+
+
 
 ---
 
