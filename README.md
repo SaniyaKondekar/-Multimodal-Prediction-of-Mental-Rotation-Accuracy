@@ -136,13 +136,18 @@ We trained several baseline models using concatenated features from all modaliti
 | XGBoost             | Gradient boosting for higher performance and regularization |
 | Logistic Regression | Simple linear baseline for comparison |
 
-**Hyperparameter Tuning:**  
-- Used **Optuna** to automatically search for optimal hyperparameters  
-- Metrics optimized: **F1-score** (primary), Accuracy, ROC-AUC  
+
 
 **Outcome:**  
 - Random Forest and XGBoost showed **stronger performance** compared to Logistic Regression.  
 - Feature importance was extracted via **SHAP** and **LIME** to understand key contributors from EEG, Eye-tracking, GSR, and Facial features.
+- The XGBoost baseline achieved (evaluated on a single test set):
+
+  - Accuracy: 0.6357
+  - Precision: 0.6327
+  - Recall: 0.6471
+  - F1-Score: 0.6398
+  - ROC-AUC: 0.6909 
 
 ---
 
