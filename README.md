@@ -216,24 +216,38 @@ Models were tested using cross-validation and a separate test set, with Optuna t
 ## 📂 Repository Structure
 ```
 project/
-├── data/
-│ ├── PSY_feature_engineered.csv       # Target labels and timestamps
-│ ├── EEG_feature_engineered.csv       # EEG features
-│ ├── GSR_feature_engineered.csv       # Skin conductance/resistance
-│ ├── EYE_feature_engineered.csv       # Eye-tracking features
-│ ├── IVT_feature_engineered.csv       # Additional eye metrics
-│ └── TIVA_feature_engineered.csv      # Facial expressions and emotions
-├── notebooks/
-│ ├── 01_preprocessing.ipynb           # Data cleaning & merging
-│ ├── 02_feature_engineering.ipynb     # Feature computation
-│ ├── 03_modeling_baseline.ipynb       # Random Forest, XGBoost, Logistic Regression
-│ ├── 04_modeling_fusion.ipynb         # Multimodal fusion models
-│ └── 05_analysis.ipynb                # Evaluation & interpretability
-├── models/
-│ ├── scaler.pkl                       # Preprocessing scaler
-│ ├── xgb_model.pkl                    # XGBoost trained model(Best Accuarcy Model)
-│ └── fusion_model.pt                  # Multimodal fusion model
-└── README.md                          # Project documentation
+├── README.md                                                 # Project overview, methodology, and results summary
+├── Scripts/                                                  # Standalone Python scripts for model testing and utilities
+│   └── 01_test_fusion_model.py                               # Script to load and test the final fusion model on new data
+├── data/                                                     # CSV files containing synchronized and engineered features from each data modality
+│   ├── CompleteFeatureEngineering.csv                        # Merged dataset with all modalities' features for end-to-end modeling
+│   ├── EEG_features_engineered.csv                           # Aggregated EEG signals (e.g., alpha/beta bands, power stats)
+│   ├── EYE_features_engineered.csv                           # Eye-tracking metrics (e.g., fixations, saccades, pupil dilation)
+│   ├── GSR_features_engineered.csv                           # Galvanic skin response features (e.g., peaks, mean conductance)
+│   ├── IVT_features_engineered.csv                           # Interest of visual something (IVT) gaze transition features
+│   ├── PSY_features_engineered.csv                           # Psychological/psychometric survey-based features
+│   └── TIVA_features_engineered.csv                          # Facial emotion analysis (TIVA: action units, valence/arousal)
+├── models/                                                   # Saved model artifacts, scalers, and modality-specific boosters for fusion
+│   ├── scaler.pkl                                            # Fitted StandardScaler for feature normalization across modalities
+│   ├── xg_model.pkl                                          # Baseline XGBoost model pickle for single-modality predictions
+│   └── fusion/                                               # Directory of per-modality boosted models (CatBoost, LightGBM, XGBoost) used in stacking ensemble; total 50 files (6 modalities × 3 boosters × ~3 variants/formats)
+│       ├── eeg_catboost.cbm                                  # CatBoost model for EEG modality
+│       ├── eeg_lightgbm.txt                                  # LightGBM booster text dump for EEG
+│       ├── eeg_xgboost.json                                  # XGBoost JSON serialization for EEG
+│       ├── eye_catboost.cbm                                  # CatBoost for eye-tracking
+│       ├── eye_lightgbm.txt                                  # LightGBM for eye-tracking
+│       ├── eye_xgboost.json                                  # XGBoost for eye-tracking
+│       ├── facial_catboost.cbm                               # CatBoost for facial emotions
+│       ├── facial_lightgbm.txt                               # LightGBM for facial
+│       ├── facial_xgboost.json                               # XGBoost for facial
+│       ├── gsr_catboost.cbm                                  # CatBoost for GSR
+│       ...  # (and 41 more: similar patterns for gsr/ivt/psy/tiva across boosters, plus additional tuned variants/checkpoints)
+└── notebooks/                                                # Jupyter notebooks outlining the full pipeline from data prep to analysis
+    ├── 01_preprocessing.ipynb                                # Timestamp alignment, outlier removal, and initial data merging
+    ├── 02_feature_engineering.ipynb                          # Modality-specific feature engineering
+    ├── 03_modeling_baseline.ipynb                            # Single-modality baselines (RF, XGBoost, Logistic Regression) with Optuna tuning
+    ├── 04_modeling_fusion.ipynb                              # Multimodal stacking ensemble, early/late fusion, and final model saving
+    └── 05_analysis.ipynb                                     # Analysis of all other notebooks
 ```
 ---
 <p align="center">
