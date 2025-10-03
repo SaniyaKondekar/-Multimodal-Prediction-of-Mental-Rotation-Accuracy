@@ -89,9 +89,7 @@ The dataset is **multimodal** and organized as follows:
 - XGBoost  
 - Logistic Regression  
 
-**Hyperparameter Tuning:**  
-
-- Performed with **Optuna** to maximize F1-score  
+  
 
 **Intermediate Fusion:**  
 
