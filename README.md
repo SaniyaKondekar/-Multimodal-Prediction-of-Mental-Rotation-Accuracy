@@ -249,5 +249,5 @@ project/
 ```
 ---
 <p align="center">
-Made with ❤️ by <strong>Visionaries</strong> | IITB EdTech 2025
+Made with ❤️ by <strong>Visionaries</strong> | IIT Bombay EdTech 2025
 </p>
